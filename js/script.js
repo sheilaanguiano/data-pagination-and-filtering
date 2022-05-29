@@ -3,10 +3,15 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 
+/*******  CONSTANTS ************/
 import { data } from './data.js'
-
 let itemsPerPage = 9;
 
+/**
+  * [Display a list of students cards] 
+  * @param {array} list - an array of student objects
+  * @param {number} page - the number of Page showing 
+  */
 
 function showPage (list, page) {
    let start = (page * itemsPerPage) - itemsPerPage;
@@ -31,12 +36,10 @@ function showPage (list, page) {
                <span class="date">Joined ${list[i].registered.date}</span>
             </div>
             `;
-            studentList.insertAdjacentElement("beforeend", li);
-            
+            studentList.insertAdjacentElement("beforeend", li);        
       }
    }
-
-   console.log(`Currently Displaying Page: ${page} from Index:${start} to Index: ${end}`);  
+ 
 }
 
 
@@ -63,18 +66,33 @@ function addPagination(list) {
    linkList.querySelector('li:first-child button').setAttribute('class', 'active');
 
    linkList.addEventListener('click', (e)=> {
-      // target.previousSibiling.removeAttribute('class', 'active');
-      // target.setAttribute('class', 'active')
-      let page = event.target.outerText;
+      linkList.querySelector('[class="active"]').removeAttribute("class");
+      e.target.setAttribute('class', 'active');
+      let page = e.target.textContent;
+      console.log(page);
 
       showPage(data, page);
-
    })
-
-
 }
 
 
 // Call functions
 showPage(data, 1);
 addPagination(data);
+searchBar();
+
+function searchBar(){
+   const header = document.querySelector(".header");
+   let bar = document.createElement('form');
+
+   bar.innerHTML = `
+      <label for="search" class="student-search">
+         <span>Search by name</span>
+         <input id="search" placeholder="Search by name...">
+         <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+       </label>
+   `;
+   header.appendChild(bar);
+
+   
+}
