@@ -4,13 +4,13 @@ FSJS Project 2 - Data Pagination and Filtering
 */
 
 
-
 /*******  VARIABLES ************/
 import { data } from './data.js'
 let itemsPerPage = 9;
 
 /**
-  * [Display a list of students cards] 
+  * [Display a list of students cards and call
+  *  addPagination function unless a not search results where found] 
   * @param {array} list - an array of student objects
   * @param {number} currentPage - the number of Page showing 
   */
@@ -25,8 +25,6 @@ function showPage (list, currentPage) {
    } else {
       let start = (currentPage * itemsPerPage) - itemsPerPage;
       let end = (currentPage * itemsPerPage);
-
-      console.log(`Page ${currentPage}`);
 
       studentList.innerHTML = '';
 
@@ -58,6 +56,7 @@ function showPage (list, currentPage) {
   * [Inserts pagination buttons based on the list
   * length and desired items to show per page] 
   * @param {array} list - an array of student objects
+   * @param {number} currentPage - the number of Page showing 
   */
 
 function addPagination(list, currentPage) {
@@ -89,13 +88,16 @@ function addPagination(list, currentPage) {
       
       e.target.setAttribute('class', 'active');
       let page = e.target.textContent;
-      console.log(page);
+ 
 
       showPage(list, page);
    })
 }
 
-
+/**
+  * [Creates a search form and uses a runSearch helper function to populate 2 event listeners] 
+  * @param {array} list - an array of student objects
+  */
 function searchBar(list) {
    const header = document.querySelector(".header");
    let bar = document.createElement('form');
@@ -109,21 +111,22 @@ function searchBar(list) {
    `;
    header.appendChild(bar);
 
-   bar.addEventListener('submit', (e)=> {
+   function runSearch(e){
       let searchInput = document.getElementById('search').value.toLowerCase();
       e.preventDefault();
-      console.log(searchInput);
       
       function searchByName(student){
          return student.name.first.toLowerCase().includes(searchInput) 
                || student.name.last.toLowerCase().includes(searchInput);
       }
 
+      //Creates a new list with search results
       const newList = list.filter(searchByName);
-      console.log(newList);
-      
       showPage(newList, 1);
-   })
+   }
+
+   bar.addEventListener('submit', runSearch);
+   bar.addEventListener('keyup', runSearch);
    
 }
 
