@@ -3,30 +3,39 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 
-/*******  CONSTANTS ************/
+
+
+/*******  VARIABLES ************/
 import { data } from './data.js'
 let itemsPerPage = 9;
 
 /**
   * [Display a list of students cards] 
   * @param {array} list - an array of student objects
-  * @param {number} page - the number of Page showing 
+  * @param {number} currentPage - the number of Page showing 
   */
 
-function showPage (list, page) {
-   let start = (page * itemsPerPage) - itemsPerPage;
-   let end = (page * itemsPerPage);
+function showPage (list, currentPage) { 
    let studentList = document.getElementsByClassName('student-list')[0];
+   if (list.length === 0) {
+      studentList.innerHTML= `
+         <h2>No results found...</h>
+      `
+      addPagination([], 0)
+   } else {
+      let start = (currentPage * itemsPerPage) - itemsPerPage;
+      let end = (currentPage * itemsPerPage);
 
-   studentList.innerHTML = '';
+      console.log(`Page ${currentPage}`);
 
-   for(let i = 0; i < list.length; i++){
-      if( i >= start && i < end){
-         
-         let li = document.createElement('li');
-         li.setAttribute("class", "student-item cf");
-           
-         li.innerHTML = `
+      studentList.innerHTML = '';
+
+      for (let i = 0; i < list.length; i++) {
+         if (i >= start && i < end) {
+            let li = document.createElement('li');
+            li.setAttribute("class", "student-item cf");
+
+            li.innerHTML = `
             <div class="student-details">
                <img class="avatar" src="${list[i].picture.thumbnail}" alt="Profile Picture">
                <h3>${list[i].name.first} ${list[i].name.last}</h3>
@@ -36,21 +45,22 @@ function showPage (list, page) {
                <span class="date">Joined ${list[i].registered.date}</span>
             </div>
             `;
-            studentList.insertAdjacentElement("beforeend", li);        
+            studentList.insertAdjacentElement("beforeend", li);
+         }
       }
+      addPagination(list, currentPage);
    }
- 
 }
 
 
 
+/**
+  * [Inserts pagination buttons based on the list
+  * length and desired items to show per page] 
+  * @param {array} list - an array of student objects
+  */
 
-
-/*
-Create the `addPagination` function
-This function will create and insert/append the elements needed for the pagination buttons
-*/
-function addPagination(list) {
+function addPagination(list, currentPage) {
    let pages = Math.ceil(list.length / itemsPerPage);
    let linkList = document.getElementsByClassName('link-list')[0];
 
@@ -58,30 +68,35 @@ function addPagination(list) {
 
    for(let i= 1; i <= pages; i++) {
       let li = document.createElement('li');
-      li.innerHTML = `
-         <button type="button">${i}</button>
-         `
+
+      if (currentPage == i ) {
+         li.innerHTML = `
+               <button type="button" class="active">${i}</button>
+             `
+      }
+      else {
+         li.innerHTML = `
+                <button type="button">${i}</button>
+              `
+      }
+
       linkList.insertAdjacentElement("beforeend", li);
+
    }
-   linkList.querySelector('li:first-child button').setAttribute('class', 'active');
 
    linkList.addEventListener('click', (e)=> {
       linkList.querySelector('[class="active"]').removeAttribute("class");
+      
       e.target.setAttribute('class', 'active');
       let page = e.target.textContent;
       console.log(page);
 
-      showPage(data, page);
+      showPage(list, page);
    })
 }
 
 
-// Call functions
-showPage(data, 1);
-addPagination(data);
-searchBar();
-
-function searchBar(){
+function searchBar(list) {
    const header = document.querySelector(".header");
    let bar = document.createElement('form');
 
@@ -94,5 +109,26 @@ function searchBar(){
    `;
    header.appendChild(bar);
 
+   bar.addEventListener('submit', (e)=> {
+      let searchInput = document.getElementById('search').value.toLowerCase();
+      e.preventDefault();
+      console.log(searchInput);
+      
+      function searchByName(student){
+         return student.name.first.toLowerCase().includes(searchInput) 
+               || student.name.last.toLowerCase().includes(searchInput);
+      }
+
+      const newList = list.filter(searchByName);
+      console.log(newList);
+      
+      showPage(newList, 1);
+   })
    
 }
+
+
+
+// Call functions
+showPage(data, 1);
+searchBar(data);
