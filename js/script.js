@@ -111,6 +111,7 @@ function searchBar(list) {
    `;
    header.appendChild(bar);
 
+   //Helper Function
    function runSearch(e){
       let searchInput = document.getElementById('search').value.toLowerCase();
       e.preventDefault();
