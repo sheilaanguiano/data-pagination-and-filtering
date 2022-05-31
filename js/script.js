@@ -17,11 +17,18 @@ let itemsPerPage = 9;
 
 function showPage (list, currentPage) { 
    let studentList = document.getElementsByClassName('student-list')[0];
+   let pageHeader = document.getElementsByTagName('h2')[0];
+
+   pageHeader.addEventListener('click', () => {
+     location.reload();
+   });
+   
    if (list.length === 0) {
       studentList.innerHTML= `
          <h2>No results found...</h>
       `
-      addPagination([], 0)
+      addPagination([], 0);
+  
    } else {
       let start = (currentPage * itemsPerPage) - itemsPerPage;
       let end = (currentPage * itemsPerPage);
@@ -98,7 +105,7 @@ function addPagination(list, currentPage) {
   * [Creates a search form and uses a runSearch helper function to populate 2 event listeners] 
   * @param {array} list - an array of student objects
   */
-function searchBar(list) {
+function showSearchBar(list) {
    const header = document.querySelector(".header");
    let bar = document.createElement('form');
 
@@ -131,8 +138,6 @@ function searchBar(list) {
    
 }
 
-
-
 // Call functions
 showPage(data, 1);
-searchBar(data);
+showSearchBar(data);
