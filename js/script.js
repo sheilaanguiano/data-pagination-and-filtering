@@ -91,13 +91,14 @@ function addPagination(list, currentPage) {
    }
 
    linkList.addEventListener('click', (e)=> {
-      linkList.querySelector('[class="active"]').removeAttribute("class");
+      if(e.target.tagName === 'BUTTON'){
+         linkList.querySelector('[class="active"]').removeAttribute("class");  
       
       e.target.setAttribute('class', 'active');
       let page = e.target.textContent;
- 
-
       showPage(list, page);
+         
+      }      
    })
 }
 
